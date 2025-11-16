@@ -1,0 +1,33 @@
+# --- Ignore virtual environment and library folders ---
+app/Lib/
+app/Include/
+app/Scripts/
+app/__pycache__/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- Ignore temporary or large files ---
+*.dll
+*.so
+*.dylib
+*.zip
+*.tar
+*.gz
+*.h5
+*.pth
+*.pt
+*.pkl
+*.log
+
+# --- Ignore environment/config folders ---
+venv/
+.env/
+logs/
+uploads/
+test_images/
+
+# --- Ignore OS files ---
+.DS_Store
+Thumbs.db
