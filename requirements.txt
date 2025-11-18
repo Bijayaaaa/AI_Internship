@@ -1,16 +1,20 @@
-# FastAPI and server
-fastapi==0.120.2
+# FastAPI & server
+fastapi==0.103.2
 uvicorn==0.23.2
 
 # TensorFlow + Keras
+tensorflow==2.13.0
 keras==2.13.1
 
 # Data processing
 numpy==1.24.3
 pillow==10.4.0
 
-# For UI / optional
+# Optional UI
 gradio==3.46.1
 
-# Optional: logging, utils
+# File upload
 python-multipart==0.0.6
+
+# Utilities
+psutil
