@@ -1,2 +1,4 @@
-# .gitignore
 bert_sentiment_analysis_env/
+__pycache__/
+*.pyc
+*.pyo
