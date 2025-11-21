@@ -24,9 +24,12 @@ setup:
   install_dependencies: pip install -r requirements.txt
 
 run_local:
+
   
   command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+  
   swagger_ui: http://127.0.0.1:8000/docs
+
 
 example_request:
  
