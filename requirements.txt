@@ -1,7 +1,8 @@
 fastapi
 uvicorn[standard]
-onnxruntime
-transformers
 numpy
 torch
+onnxruntime
+transformers
+huggingface_hub
 pydantic

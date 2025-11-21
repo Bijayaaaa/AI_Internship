@@ -4,6 +4,7 @@ import onnxruntime as ort
 from transformers import AutoTokenizer
 import numpy as np
 import torch
+from huggingface_hub import hf_hub_download
 
 app = FastAPI(
     title="NepaliBERT Sentiment Analysis API",
@@ -11,28 +12,23 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# Hugging Face repository
+MODEL_REPO = "Bijaya1/nepali-bert-3class"
 
-TOKENIZER_PATH = "model/tokenizer"      
-MODEL_PATH     = "model/nepaliBERT_3class.onnx"               
+# Download ONNX model from HF
+MODEL_PATH = hf_hub_download(repo_id=MODEL_REPO, filename="nepaliBERT_3class.onnx")
 
+# Load tokenizer from HF
+tokenizer = AutoTokenizer.from_pretrained(MODEL_REPO)
 
-# LOAD TOKENIZER
-tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_PATH)
+# Load ONNX model
+session = ort.InferenceSession(MODEL_PATH, providers=["CPUExecutionProvider"])
 
-
-# LOAD ONNX MODEL
-session = ort.InferenceSession(
-    MODEL_PATH,
-    providers=["CPUExecutionProvider"]
-)
-
-
-# REQUEST SCHEMA
+# Request schema
 class TextInput(BaseModel):
     text: str
 
-
-# PREPROCESSING
+# Preprocessing function
 def preprocess(text):
     encoding = tokenizer(
         text,
@@ -41,18 +37,14 @@ def preprocess(text):
         truncation=True,
         return_tensors="np"
     )
-
     return {
         "input_ids": encoding["input_ids"].astype(np.int64),
         "attention_mask": encoding["attention_mask"].astype(np.int64),
     }
 
-
-# PREDICTION FUNCTION
+# Prediction function
 def predict_sentiment(text):
-
     inputs = preprocess(text)
-
     ort_inputs = {
         "input_ids": inputs["input_ids"],
         "attention_mask": inputs["attention_mask"]
@@ -64,14 +56,11 @@ def predict_sentiment(text):
     # Softmax
     probs = torch.softmax(torch.tensor(logits), dim=1).numpy()[0]
 
-    # Predicted class index
-    pred_idx = int(np.argmax(probs))
-
-    # Correct 3-class label mapping
+    # Class labels
     label_map = {0: "NEGATIVE", 1: "NEUTRAL", 2: "POSITIVE"}
 
     return {
-        "label": label_map[pred_idx],
+        "label": label_map[int(np.argmax(probs))],
         "probabilities": {
             "negative": float(probs[0]),
             "neutral": float(probs[1]),
@@ -79,8 +68,7 @@ def predict_sentiment(text):
         }
     }
 
-
-# API ENDPOINTS
+# API endpoints
 @app.post("/predict")
 def predict(input: TextInput):
     return {

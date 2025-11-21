@@ -14,9 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Stage 2: Copy application files
 # ------------------------
 COPY main.py .
-
-# Copy model files
-COPY model ./model
+COPY Nepali_sentiment_analysis.ipynb .
 
 # Expose the FastAPI port
 EXPOSE 8000
